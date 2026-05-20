@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="repl-app.AppHost/repl-app.AppHost.csproj" />
+  <Project Path="repl-app.ServiceDefaults/repl-app.ServiceDefaults.csproj" />
+  <Project Path="ReplLib/ReplLib.csproj" />
+  <Project Path="ReplService/ReplService.csproj" />
+</Solution>
