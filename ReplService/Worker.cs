@@ -4,8 +4,7 @@ using ReplLib.Pipelines;
 
 namespace ReplService;
 
-public class Worker(ILogger<Worker> logger,
-    IServiceProvider serviceProvider,
+public class Worker(IServiceProvider serviceProvider,
     IHostApplicationLifetime hostApplicationLifetime) : BackgroundService
 {
 

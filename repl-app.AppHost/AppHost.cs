@@ -2,10 +2,19 @@ using Microsoft.Extensions.DependencyInjection;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-var sqlServer = builder.AddSqlServer("sqlServer");
+var sqlServerDb = builder.AddSqlServer("sqlServer");
 
-var publisherDb = sqlServer.AddDatabase("publisherDb");
-var subscriberDb = sqlServer.AddDatabase("subscriberDb");
+sqlServerDb
+    .WithEnvironment("MSSQL_AGENT_ENABLED", "true");
+
+var publisherDb = sqlServerDb.AddDatabase("publisherDb");
+var subscriberDb = sqlServerDb.AddDatabase("subscriberDb");
+
+var migrationService = builder.AddProject<Projects.FamilyTreeLib_MigrationService>("migrationService")
+    .WithReference(publisherDb)
+    .WaitFor(publisherDb)
+    .WithReference(subscriberDb)
+    .WaitFor(subscriberDb);
 
 var replService = builder.AddProject<Projects.ReplService>("replService")
     .WithReference(publisherDb)

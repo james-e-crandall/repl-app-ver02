@@ -2,5 +2,11 @@ namespace ReplLib.Pipelines;
 
 public interface IReplArticles
 {
-    public Dictionary<string, string> GetTableNames();
+    public IEnumerable<ReplArticle> GetTableNames();
+}
+
+public class ReplArticle
+{
+    public required string ArticleName { get; set; }
+    public required string PublicationName { get; set; }
 }

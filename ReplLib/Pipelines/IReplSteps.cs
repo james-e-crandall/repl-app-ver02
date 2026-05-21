@@ -32,11 +32,6 @@ public interface IReplSteps
     Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext);
 }
 
-public sealed partial class ReplicationContext
-{
-    
-}
-
 public class sp_get_distributor(ILogger<sp_get_distributor> logger,
     [FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
 {
@@ -90,14 +85,158 @@ public class sp_get_distributor(ILogger<sp_get_distributor> logger,
     }
 }
 
-public class sp_serveroption(ILogger<sp_get_distributor> logger) : IReplSteps
+public class sp_serveroption(ILogger<sp_get_distributor> logger,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
 {
     public ReplState Order => ReplState.HasServerOption;
 
-    public Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
     {
         logger.LogInformation("Evaluating sp_serveroption");
+        await connection.sp_serveroption(ct);
         replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
-        return Task.CompletedTask;
     }
 }
+
+public class sp_adddistributor(ILogger<sp_adddistributor> logger,IOptions<ReplDbSecrets> dbsecretsOptions,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasDistributor;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_adddistributor");
+        await connection.sp_adddistributor(ct, dbsecretsOptions.Value.PUBLISHERDB_PASSWORD);
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_adddistributiondb(ILogger<sp_adddistributiondb> logger, IOptions<ReplDbSecrets> dbsecretsOptions,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasDistributionDb;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_adddistributiondb");
+        await  connection.sp_adddistributiondb(ct, "sa", dbsecretsOptions.Value.PUBLISHERDB_PASSWORD);
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_adddistpublisher(ILogger<sp_adddistpublisher> logger, IOptions<ReplDbSecrets> dbsecretsOptions,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasPublisher;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_adddistpublisher");
+        await  connection.sp_adddistpublisher(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, "sa", dbsecretsOptions.Value.PUBLISHERDB_PASSWORD);
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_replicationdboption(ILogger<sp_replicationdboption> logger, IOptions<ReplDbSecrets> dbsecretsOptions,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasReplicationDbOption;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_replicationdboption");
+        await  connection.sp_replicationdboption(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME);
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_addlogreader_agent(ILogger<sp_addlogreader_agent> logger,IOptions<ReplDbSecrets> dbsecretsOptions,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasLogReaderAgent;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_addlogreader_agent");
+        await  connection.sp_addlogreader_agent(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, "sa", dbsecretsOptions.Value.PUBLISHERDB_PASSWORD);
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+public class sp_addpublication(ILogger<sp_addpublication> logger, IOptions<ReplDbSecrets> dbsecretsOptions, IEnumerable<IReplArticles> replArticles,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasPublication;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_addlogreader_agent");
+        var publications = replArticles.SelectMany(x => x.GetTableNames().Select(a => a.PublicationName)).Distinct();
+        foreach(var publication in publications)
+        {
+            await connection.sp_addpublication(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, publication);
+        }
+
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_addpublication_snapshot(ILogger<sp_addpublication_snapshot> logger, IOptions<ReplDbSecrets> dbsecretsOptions, IEnumerable<IReplArticles> replArticles,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasPublicationSnapshot;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_addpublication_snapshot");
+        var publications = replArticles.SelectMany(x => x.GetTableNames().Select(a => a.PublicationName)).Distinct();
+        foreach(var publication in publications)
+        {
+            await connection.sp_addpublication_snapshot(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, publication, "sa", dbsecretsOptions.Value.PUBLISHERDB_PASSWORD);
+        }
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_addarticle (ILogger<sp_addarticle> logger,IOptions<ReplDbSecrets> dbsecretsOptions, IEnumerable<IReplArticles> replArticles,[FromKeyedServices("publisherDb")] SqlConnection connection)  : IReplSteps
+{
+    public ReplState Order => ReplState.HasArticle;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_addarticle");
+        foreach(var article in replArticles)
+        {
+            var tableNames = article.GetTableNames();
+            foreach(var tableName in tableNames)
+            {
+                await connection.sp_addarticle(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, tableName.PublicationName, tableName.ArticleName);
+            }
+        }
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_addsubscription(ILogger<sp_addsubscription> logger, IOptions<ReplDbSecrets> dbsecretsOptions, IEnumerable<IReplArticles> replArticles,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasSubscription;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_addsubscription");
+        var publications = replArticles.SelectMany(x => x.GetTableNames().Select(a => a.PublicationName)).Distinct();
+        foreach(var publication in publications)
+        {
+            await connection.sp_addsubscription(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, publication, dbsecretsOptions.Value.SUBSCRIBERDB_DATABASENAME);
+        }
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+
+public class sp_addpushsubscription_agent(ILogger<sp_addpushsubscription_agent> logger, IOptions<ReplDbSecrets> dbsecretsOptions, IEnumerable<IReplArticles> replArticles,[FromKeyedServices("publisherDb")] SqlConnection connection) : IReplSteps
+{
+    public ReplState Order => ReplState.HasPushSubscriptionAgent;
+
+    public async Task EvaulateAsync(CancellationToken ct, ReplicationContext replicationContext)
+    {
+        logger.LogInformation("Evaluating sp_addpushsubscription_agent");
+        var publications = replArticles.SelectMany(x => x.GetTableNames().Select(a => a.PublicationName)).Distinct();
+        foreach(var publication in publications)
+        {
+           await connection.sp_addpushsubscription_agent(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, publication, dbsecretsOptions.Value.SUBSCRIBERDB_DATABASENAME, "sa", dbsecretsOptions.Value.PUBLISHERDB_PASSWORD);
+        }
+        replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;
+    }
+}
+

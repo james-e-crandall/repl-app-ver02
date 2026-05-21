@@ -114,6 +114,10 @@ public static partial class ReplSqlConnectionExtensions
 
             """;
         var parameters = new List<SqlParameter>();
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return GetDataTableFromStoredProc(conn, "sp_get_distributor", parameters.ToArray());
     }
 
@@ -132,6 +136,10 @@ public static partial class ReplSqlConnectionExtensions
 
             """;
         var parameters = new List<SqlParameter>();
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return ExecuteNonQueryAsync(conn, formattedSql, ct, parameters.ToArray());
     }
 
@@ -153,6 +161,10 @@ public static partial class ReplSqlConnectionExtensions
 
         var parameters = new List<SqlParameter>();
         parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar) { Value = password });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -177,6 +189,10 @@ public static partial class ReplSqlConnectionExtensions
         parameters.Add(new SqlParameter("@database", SqlDbType.NVarChar) { Value = "distribution" });
         parameters.Add(new SqlParameter("@login", SqlDbType.NVarChar) { Value = login });
         parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar) { Value = password });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -201,10 +217,14 @@ public static partial class ReplSqlConnectionExtensions
             """;
 
         var parameters = new List<SqlParameter>();
-        parameters.Add(new SqlParameter("@database", SqlDbType.NVarChar) { Value = "distribution" });
+        parameters.Add(new SqlParameter("@distribution_db", SqlDbType.NVarChar) { Value = "distribution" });
         parameters.Add(new SqlParameter("@login", SqlDbType.NVarChar) { Value = login });
         parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar) { Value = password });
         parameters.Add(new SqlParameter("@working_directory", SqlDbType.NVarChar) { Value = working_directory });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -224,6 +244,10 @@ public static partial class ReplSqlConnectionExtensions
 
         var parameters = new List<SqlParameter>();
         parameters.Add(new SqlParameter("@dbname", SqlDbType.NVarChar) { Value = publisherDb });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -246,6 +270,10 @@ public static partial class ReplSqlConnectionExtensions
         var parameters = new List<SqlParameter>();
         parameters.Add(new SqlParameter("@login", SqlDbType.NVarChar) { Value = login });
         parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar) { Value = password });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -267,6 +295,10 @@ public static partial class ReplSqlConnectionExtensions
 
         var parameters = new List<SqlParameter>();
         parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -291,6 +323,10 @@ public static partial class ReplSqlConnectionExtensions
         parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
         parameters.Add(new SqlParameter("@login", SqlDbType.NVarChar) { Value = login });
         parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar) { Value = password });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -316,6 +352,10 @@ public static partial class ReplSqlConnectionExtensions
         parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication});
         parameters.Add(new SqlParameter("@table", SqlDbType.NVarChar) { Value = table });
         parameters.Add(new SqlParameter("@schemaowner", SqlDbType.NVarChar) { Value = schemaowner });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -337,6 +377,10 @@ public static partial class ReplSqlConnectionExtensions
         var parameters = new List<SqlParameter>();
         parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication});
         parameters.Add(new SqlParameter("@destination_db", SqlDbType.NVarChar) { Value = subscriberDb });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 
@@ -362,6 +406,10 @@ public static partial class ReplSqlConnectionExtensions
         parameters.Add(new SqlParameter("@subscriber_db", SqlDbType.NVarChar) { Value = subscriberDb });
         parameters.Add(new SqlParameter("@login", SqlDbType.NVarChar) { Value = login });
         parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar) { Value = password });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
 

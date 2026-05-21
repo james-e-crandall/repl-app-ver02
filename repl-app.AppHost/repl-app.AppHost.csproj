@@ -1,4 +1,4 @@
-<Project Sdk="Aspire.AppHost.Sdk/13.3.3">
+<Project Sdk="Aspire.AppHost.Sdk/13.3.5">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,11 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.3.3" />
+    <PackageReference Include="Aspire.Hosting.SqlServer" Version="13.3.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ReplService\ReplService.csproj" />
+    <ProjectReference Include="..\FamilyTreeLib.MigrationService\FamilyTreeLib.MigrationService.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="FamilyTreeLib.MigrationService/FamilyTreeLib.MigrationService.csproj" />
+  <Project Path="FamilyTreeLib/FamilyTreeLib.csproj" />
   <Project Path="repl-app.AppHost/repl-app.AppHost.csproj" />
   <Project Path="repl-app.ServiceDefaults/repl-app.ServiceDefaults.csproj" />
   <Project Path="ReplLib/ReplLib.csproj" />
