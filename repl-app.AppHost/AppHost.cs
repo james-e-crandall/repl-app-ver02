@@ -22,5 +22,10 @@ var replService = builder.AddProject<Projects.ReplService>("replService")
     .WithReference(subscriberDb)
     .WaitFor(subscriberDb); 
 
+var replApi = builder.AddProject<Projects.ReplApi>("replApi")
+    .WithReference(publisherDb)
+    .WaitFor(publisherDb)
+    .WithReference(subscriberDb)
+    .WaitFor(subscriberDb);
 
 builder.Build().Run();

@@ -20,5 +20,15 @@ public static class ServiceExtensions
 
         return services;
     }
+
+    // public static IServiceCollection AddArticles<T>(this IServiceCollection services, params string[] articleTypes)
+    // {
+    //     foreach (var articleType in articleTypes)
+    //     {
+
+    //     }
+        
+    //     return services;
+    // }
 }
 

@@ -1,3 +1,5 @@
+using System.Data;
+
 namespace ReplLib.Models;
 
 public class ArticleColumns
@@ -6,6 +8,22 @@ public class ArticleColumns
     public string? column { get; set; } 
 
     public bool? published { get; set; } 
+
+    public static List<ArticleColumns> FromDataTable(DataTable dt)
+    {
+        var articleColumns = new List<ArticleColumns>();
+        foreach (DataRow row in dt.Rows)
+        {
+            var articleColumn = new ArticleColumns
+            {
+                column_id = row["column id"] != DBNull.Value ? (int?)row["column id"] : null,
+                column = row["column"] != DBNull.Value ? row["column"].ToString() : null,
+                published = row["published"] != DBNull.Value && (bool)row["published"]
+            };
+            articleColumns.Add(articleColumn);
+        }
+        return articleColumns;
+    }
 
 }
 
