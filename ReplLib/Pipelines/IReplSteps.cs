@@ -251,6 +251,10 @@ public class sp_addarticle (ILogger<sp_addarticle> logger,IOptions<ReplDbSecrets
         foreach(var tableName in replArticles)
         {
             await connection.sp_addarticle(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, tableName.PublicationName, tableName.ArticleName);
+
+            //await connection.sp_changearticle(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, tableName.PublicationName, tableName.ArticleName);
+            await connection.sp_articlecolumn(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, tableName.PublicationName, tableName.ArticleName);
+
         }
 
         replicationContext.CurrentReplState = replicationContext.CurrentReplState | this.Order;

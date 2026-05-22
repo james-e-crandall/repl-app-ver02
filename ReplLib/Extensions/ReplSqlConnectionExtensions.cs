@@ -99,70 +99,7 @@ public static partial class ReplSqlConnectionExtensions
   
 #region  public members
 
-    public static DataTable sp_helplogreader_agent(this SqlConnection conn)
-    {
-        var parameters = new List<SqlParameter>();
-        if(conn.State != ConnectionState.Open)
-        {
-            conn.Open();
-        }
-        return GetDataTableFromStoredProc(conn, "sp_helplogreader_agent", parameters.ToArray());
-    }
 
-    public static DataTable sp_helppublication(this SqlConnection conn, string publication)
-    {
-        var parameters = new List<SqlParameter>();
-        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
-        if(conn.State != ConnectionState.Open)
-        {
-            conn.Open();
-        }
-        return GetDataTableFromStoredProc(conn, "sp_helppublication", parameters.ToArray());
-    }
-
-    public static DataTable sp_helppublication_snapshot(this SqlConnection conn, string publication)
-    {
-        var parameters = new List<SqlParameter>();
-        if(conn.State != ConnectionState.Open)
-        {
-            conn.Open();
-        }
-        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
-        return GetDataTableFromStoredProc(conn, "sp_helppublication_snapshot", parameters.ToArray());
-    }
-
-    public static DataTable sp_helparticle(this SqlConnection conn, string publication)
-    {
-        var parameters = new List<SqlParameter>();
-        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
-        if(conn.State != ConnectionState.Open)
-        {
-            conn.Open();
-        }
-        return GetDataTableFromStoredProc(conn, "sp_helparticle", parameters.ToArray());
-    }
-
-    public static DataTable sp_helparticlecolumns(this SqlConnection conn, string publication, string article)
-    {
-        var parameters = new List<SqlParameter>();
-        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
-        parameters.Add(new SqlParameter("@article", SqlDbType.NVarChar) { Value = article });
-        if(conn.State != ConnectionState.Open)
-        {
-            conn.Open();
-        }
-        return GetDataTableFromStoredProc(conn, "sp_helparticlecolumns", parameters.ToArray());
-    }
-
-    public static DataTable sp_get_distributor(this SqlConnection conn)
-    {
-        var parameters = new List<SqlParameter>();
-        if(conn.State != ConnectionState.Open)
-        {
-            conn.Open();
-        }
-        return GetDataTableFromStoredProc(conn, "sp_get_distributor", parameters.ToArray());
-    }
 
     public static Task<int> sp_serveroption(this SqlConnection conn, CancellationToken ct)
     {
@@ -380,14 +317,13 @@ public static partial class ReplSqlConnectionExtensions
         -- Use the database
         USE [{{publisherDb}}];
         GO
-        DECLARE @schema_option AS int;
-        SET @schema_option = (SELECT CAST(0x80030F3 AS int) | cast(0x2000000000 AS int));
+
         EXEC sp_addarticle 
             @publication = @publication, 
             @article = @table, 
             @source_object = @table,
             @source_owner = @schemaowner, 
-            @schema_option = @schema_option,
+            @schema_option = 0x80030F3,
             @vertical_partition = N'true', 
             @type = N'logbased';
         GO
@@ -403,6 +339,56 @@ public static partial class ReplSqlConnectionExtensions
         }
         return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
     }
+
+    public static async Task<int> sp_changearticle(this SqlConnection conn, CancellationToken ct,
+        string publisherDb, string publication, string table)
+    {
+        var formattedSql = $$"""
+        -- Use the database
+        USE [{{publisherDb}}];
+        GO
+        EXEC sp_changearticle 
+            @publication = @publication, 
+            @article = @table, 
+            @property = N'schema_option', 
+            @value = N'0x2000000000'; -- Adds the hierarchyid to varbinary conversion
+
+        GO
+        """;
+
+        var parameters = new List<SqlParameter>();
+        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication});
+        parameters.Add(new SqlParameter("@table", SqlDbType.NVarChar) { Value = table });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
+        return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
+    }
+
+    public static async Task<int> sp_articlecolumn(this SqlConnection conn, CancellationToken ct,
+        string publisherDb, string publication, string table)
+    {
+        var formattedSql = $$"""
+        -- Use the database
+        USE [{{publisherDb}}];
+        GO
+        EXEC sp_articlecolumn 
+            @publication = @publication, 
+            @article = @table;
+        GO
+        """;
+
+        var parameters = new List<SqlParameter>();
+        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication});
+        parameters.Add(new SqlParameter("@table", SqlDbType.NVarChar) { Value = table });
+        if(conn.State != ConnectionState.Open)
+        {
+            conn.Open();
+        }
+        return await ExecuteNonQueryAsync(conn ,formattedSql,ct, parameters.ToArray() );
+    }
+ 
 
     public static async Task<int> sp_addsubscription(this SqlConnection conn, CancellationToken ct,
         string publisherDb, string publication, string subscriberDb)
