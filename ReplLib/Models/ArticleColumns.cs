@@ -8,8 +8,10 @@ public class ArticleColumns
     public string? column { get; set; } 
 
     public bool? published { get; set; } 
+    public string? article { get; set; }
+    public string? publication { get; set; }
 
-    public static List<ArticleColumns> FromDataTable(DataTable dt)
+    public static List<ArticleColumns> FromDataTable(DataTable dt, string article, string publication)
     {
         var articleColumns = new List<ArticleColumns>();
         foreach (DataRow row in dt.Rows)
@@ -18,7 +20,9 @@ public class ArticleColumns
             {
                 column_id = row["column id"] != DBNull.Value ? (int?)row["column id"] : null,
                 column = row["column"] != DBNull.Value ? row["column"].ToString() : null,
-                published = row["published"] != DBNull.Value && (bool)row["published"]
+                published = row["published"] != DBNull.Value && (bool)row["published"],
+                article = article,
+                publication = publication
             };
             articleColumns.Add(articleColumn);
         }

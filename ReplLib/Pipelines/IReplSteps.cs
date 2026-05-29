@@ -250,6 +250,7 @@ public class sp_addarticle (ILogger<sp_addarticle> logger,IOptions<ReplDbSecrets
         logger.LogInformation("Evaluating sp_addarticle");
         foreach(var tableName in replArticles)
         {
+            logger.LogInformation($"Evaluating sp_addarticle: {tableName.PublicationName} - {tableName.ArticleName}");
             await connection.sp_addarticle(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, tableName.PublicationName, tableName.ArticleName);
 
             //await connection.sp_changearticle(ct, dbsecretsOptions.Value.PUBLISHERDB_DATABASENAME, tableName.PublicationName, tableName.ArticleName);

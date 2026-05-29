@@ -39,14 +39,14 @@ public static class ReplHelpEndpoints
             IEnumerable<ReplArticle> replArticles)
         {
             var replicationSetups = new List<Publication>();
-            //var publications = replArticles.Select(a => a.PublicationName).Distinct();
-            var publications = replArticles.PublicationsNames();
-            foreach(var publication in publications)
-            {
-                var dt = connection.sp_helppublication(publication);
-                replicationSetups.AddRange(Publication.FromDataTable(dt));
-            }
-
+            // var publications = replArticles.PublicationsNames();
+            // foreach(var publication in publications)
+            // {
+            //     var dt = connection.sp_helppublication(publication);
+            //     replicationSetups.AddRange(Publication.FromDataTable(dt));
+            // }
+            var dt = connection.sp_helppublication();
+            replicationSetups.AddRange(Publication.FromDataTable(dt));
             return TypedResults.Ok<List<Publication>>(replicationSetups);
         }
 
@@ -54,9 +54,11 @@ public static class ReplHelpEndpoints
             IEnumerable<ReplArticle> replArticles)
         {
             var replicationSetups = new List<ReplAgent>();
-            var publications = replArticles.PublicationsNames();
+            var publications = new List<Publication>();
+            var dt1 = connection.sp_helppublication();
+            publications.AddRange(Publication.FromDataTable(dt1));
             foreach(var publication in publications)            {
-                var dt = connection.sp_helppublication_snapshot(publication);
+                var dt = connection.sp_helppublication_snapshot(publication.name);
                 replicationSetups.AddRange(ReplAgent.FromDataTable(dt));
             }
             return TypedResults.Ok<List<ReplAgent>>(replicationSetups);
@@ -66,12 +68,13 @@ public static class ReplHelpEndpoints
             IEnumerable<ReplArticle> replArticles)
         {
             var replicationSetups = new List<Article>();
-            //var publications = replArticles.Select(a => a.PublicationName).Distinct();
-            var publications = replArticles.PublicationsNames();
+            var publications = new List<Publication>();
+            var dt1 = connection.sp_helppublication();
+            publications.AddRange(Publication.FromDataTable(dt1));
             foreach(var publication in publications)
             {
-                var dt = connection.sp_helparticle(publication);
-                replicationSetups.AddRange(Article.FromDataTable(dt));
+                var dt = connection.sp_helparticle(publication.name);
+                replicationSetups.AddRange(Article.FromDataTable(dt, publication.name));
             }
 
             return TypedResults.Ok<List<Article>>(replicationSetups);
@@ -81,10 +84,22 @@ public static class ReplHelpEndpoints
             IEnumerable<ReplArticle> replArticles)
         {
             var replicationSetups = new List<ArticleColumns>();
-            foreach(var article in replArticles)
+
+            var publications = new List<Publication>();
+            var dt1 = connection.sp_helppublication();
+            publications.AddRange(Publication.FromDataTable(dt1));
+
+            var articles = new List<Article>();
+            foreach(var publication in publications)
             {
-                var dt = connection.sp_helparticlecolumns(article.PublicationName, article.ArticleName);
-                replicationSetups.AddRange(ArticleColumns.FromDataTable(dt));
+                var dt = connection.sp_helparticle(publication.name);
+                articles.AddRange(Article.FromDataTable(dt, publication.name));
+            }
+
+            foreach(var article in articles)
+            {
+                var dt = connection.sp_helparticlecolumns(article.publication, article.article_name);
+                replicationSetups.AddRange(ArticleColumns.FromDataTable(dt, article.publication, article.article_name));
             }
 
             return TypedResults.Ok<List<ArticleColumns>>(replicationSetups);

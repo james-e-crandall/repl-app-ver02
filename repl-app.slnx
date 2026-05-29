@@ -1,4 +1,6 @@
 <Solution>
+  <Project Path="FamilyTreeApi/FamilyTreeApi.csproj" />
+  <Project Path="FamilyTreeApi.Tests/FamilyTreeApi.Tests.csproj" />
   <Project Path="FamilyTreeLib.MigrationService/FamilyTreeLib.MigrationService.csproj" />
   <Project Path="FamilyTreeLib/FamilyTreeLib.csproj" />
   <Project Path="repl-app.AppHost/repl-app.AppHost.csproj" />

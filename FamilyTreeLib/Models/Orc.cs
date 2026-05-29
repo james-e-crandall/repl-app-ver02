@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FamilyTreeLib.Models;
 
-public class Halfling
+public class Orc
 {
-    public Halfling() { } 
-    public Halfling(HierarchyId pathFromPatriarch, string name, int? yearOfBirth = null)
+    public Orc() { } 
+    public Orc(HierarchyId pathFromPatriarch, string name, int? yearOfBirth = null)
     {
         PathFromPatriarch = pathFromPatriarch;
         Name = name;

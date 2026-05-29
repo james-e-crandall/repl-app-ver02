@@ -44,6 +44,29 @@ namespace FamilyTreeLib.MigrationService.Migrations
 
                     b.ToTable("Halflings");
                 });
+
+            modelBuilder.Entity("FamilyTreeLib.Models.Orc", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<SqlHierarchyId>("PathFromPatriarch")
+                        .HasColumnType("hierarchyid");
+
+                    b.Property<int?>("YearOfBirth")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orcs");
+                });
 #pragma warning restore 612, 618
         }
     }

@@ -28,4 +28,8 @@ var replApi = builder.AddProject<Projects.ReplApi>("replApi")
     .WithReference(subscriberDb)
     .WaitFor(subscriberDb);
 
+var familyTreeApi = builder.AddProject<Projects.FamilyTreeApi>("familyTreeApi")
+    .WithReference(publisherDb)
+    .WaitFor(publisherDb);
+
 builder.Build().Run();

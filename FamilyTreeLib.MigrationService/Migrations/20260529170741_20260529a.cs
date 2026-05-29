@@ -6,7 +6,7 @@ using Microsoft.SqlServer.Types;
 namespace FamilyTreeLib.MigrationService.Migrations
 {
     /// <inheritdoc />
-    public partial class _20260521a : Migration
+    public partial class _20260529a : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -25,6 +25,21 @@ namespace FamilyTreeLib.MigrationService.Migrations
                 {
                     table.PrimaryKey("PK_Halflings", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "Orcs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PathFromPatriarch = table.Column<SqlHierarchyId>(type: "hierarchyid", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    YearOfBirth = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orcs", x => x.Id);
+                });
         }
 
         /// <inheritdoc />
@@ -32,6 +47,9 @@ namespace FamilyTreeLib.MigrationService.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Halflings");
+
+            migrationBuilder.DropTable(
+                name: "Orcs");
         }
     }
 }

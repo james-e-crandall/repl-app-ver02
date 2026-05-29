@@ -34,3 +34,9 @@ This works...
             @schema_option = @schema_option,
             @vertical_partition = N'true', 
             @type = N'logbased';
+
+
+Exception has occurred: CLR/System.InvalidOperationException
+An exception of type 'System.InvalidOperationException' occurred in Microsoft.EntityFrameworkCore.dll but was not handled in user code:
+ 'The entity type 'HierarchyId' requires a primary key to be defined. If you intended to use a keyless entity type, call 'HasNoKey' in 'OnModelCreating'.
+ For more information on keyless entity types, see https://go.microsoft.com/fwlink/?linkid=2141943.'

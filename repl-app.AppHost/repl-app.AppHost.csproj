@@ -16,6 +16,7 @@
     <ProjectReference Include="..\ReplService\ReplService.csproj" />
     <ProjectReference Include="..\FamilyTreeLib.MigrationService\FamilyTreeLib.MigrationService.csproj" />
     <ProjectReference Include="..\ReplApi\ReplApi.csproj" />
+    <ProjectReference Include="..\FamilyTreeApi\FamilyTreeApi.csproj" />
   </ItemGroup>
 
 </Project>

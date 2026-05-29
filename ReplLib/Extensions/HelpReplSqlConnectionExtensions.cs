@@ -25,10 +25,13 @@ public static partial class ReplSqlConnectionExtensions
         return GetDataTableFromStoredProc(conn, "sp_helplogreader_agent", parameters.ToArray());
     }
 
-    public static DataTable sp_helppublication(this SqlConnection conn, string publication)
+    public static DataTable sp_helppublication(this SqlConnection conn, string? publication = null)
     {
         var parameters = new List<SqlParameter>();
-        parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
+        if(publication != null)
+        {
+            parameters.Add(new SqlParameter("@publication", SqlDbType.NVarChar) { Value = publication });
+        }
         if(conn.State != ConnectionState.Open)
         {
             conn.Open();

@@ -15,6 +15,12 @@ builder.Services.AddScoped<ReplArticle>(x => new ReplArticle
     PublicationName = "Publication1"
 });
 
+builder.Services.AddScoped<ReplArticle>(x => new ReplArticle
+{
+    ArticleName = "Orcs",
+    PublicationName = "Publication1"
+});
+
 var host = builder.Build();
 
 host.Run();
